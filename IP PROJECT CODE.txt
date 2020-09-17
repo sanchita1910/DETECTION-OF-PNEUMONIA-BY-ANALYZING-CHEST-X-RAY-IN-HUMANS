@@ -1,0 +1,56 @@
+I=imread ('cover.jpg');                 %reading the image and storing into variable I
+IB = imnoise (I,'salt & pepper');       %adding salt and pepper noise to the image I and storing it into variable IB
+figure(1)                               %plotting a figure window 1 
+subplot(1,2,1)                          %dividing the figure 1 window into two halves and pointing to half 1
+subimage(I)                             %displaying the image I into the first half
+title('Original Image')                 %giving title to the first half image
+subplot(1, 2, 2)                        % pointing to half 2
+subimage(IB)                            %displaying the image IB into the secnd half
+title ('Noisy Image')                   %giving title to thr second image
+
+% Averaging filter
+N=ones(3)/9;                            %creating the fltering window N
+If1=imfilter(IB, N);                    %average filtering the image IB using window N and storing it nto variable If1
+figure(2)                               %creating a figure window 2
+image(If1)                              %displaying image If1
+title('Noisy image filtered by a 3-by-3 averaging filter')      %giving title to it
+
+% Median filtering
+img_med = IB;                           %copying image IB into variable img_med
+for c = 1 : 3
+    img_med(:, :, c) = medfilt2(IB(:, :, c), [3, 3]);   %applying median filtering to every component of image IB
+end
+figure(3)                               %creating the figure window 3
+image(img_med)                          %displaying the image img_med in figure 3
+title('Noisy Image filtered by a 3-by-3 median filter') %giving title to it
+
+%Hybrid median filter
+
+img_hmed=hmf(I,3);                      %applying the hybrid median filteringto image I and storing it into varable img_hmed 
+figure(4);                              %creating a figure window 4
+image(img_hmed)                         %displaying the image img_hmed into the figure window 4
+title('Noisy Image filtered by a 3-by-3 hybrid median filter')  %giving title to the image
+
+
+% Error Identification and comparitive analysis
+fprintf('*********ERROR COMPARISON********\n\n')        %just to make the output fancy
+
+err_IB= immse(I,IB);                    %calculating mean square error of image IB with reference to image I
+fprintf('\nthe mean-squared error of the noisy image is %0.4f\n',err_IB);   %Displaying the result in the output window
+err2_IB= psnr(I,IB);                    %calculating psnr ratio of thr imae IB with reference to the image I
+fprintf('\nthe psnr ratio of the noisy image is %0.4f\n',err2_IB);
+
+err_If1= immse(I,If1);                  %calculating mean square error of image If1 with reference to image I
+fprintf('\nthe mean-squared error of the image filtered by averaging filter is %0.4f\n',err_If1);
+err2_If1= psnr(I,If1);                  %calculating psnr ratio of the image If1 with reference to the image I
+fprintf('\nthe psnr ratio of the image filtered by averaging filter is %0.4f\n',err2_If1);
+
+err_img_med= immse(I,img_med);          %calculating mean square error of image img_med with reference to image I
+fprintf('\nthe mean-squared error of the image filtered by median filter is %0.4f\n',err_img_med);
+err2_img_med= psnr(I,img_med);          %calculating psnr ratio of the image img_med with reference to the image I
+fprintf('\nthe psnr ratio of the image filtered by median filter is %0.4f\n',err2_img_med);
+
+err_img_hmed= immse(I,img_hmed);        %calculating mean square error of image img_hmed with reference to image I
+fprintf('\nthe mean-squared error of the image filtered by hybrid median filter is %0.4f\n',err_img_hmed); %displaying the result
+err2_img_hmed= psnr(I,img_hmed);        %calculating psnr ratio of the image img_hmed with reference to the image I
+fprintf('\nthe psnr ratio of the image filtered by hybrid median filter is %0.4f\n',err2_img_hmed);
